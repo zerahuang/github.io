@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点击了解跳转卡片搭建</title>
+    <title>点击免费查看更多财报分析</title>
     <style>
         .content {
             display: flex;
@@ -59,197 +59,84 @@
         }
     </style>
     <link type="image/x-icon" rel="shortcut icon"
-        href="https://tkwl.tos-cn-shanghai.volces.com/img/f700e0cad3fc468c9db14685cda478d6.jpg">
+        href="https://taia.oss-cn-shanghai.aliyuncs.com/img/8287093198__eeyEvkTiLIAxWgBm3iZeDlGT.jpg">
+    <!-- <link type="image/x-icon" rel="shortcut icon" href="https://tkwl.tos-cn-shanghai.volces.com/img/f700e0cad3fc468c9db14685cda478d6.jpg"> -->
 </head>
 
 <body style="max-width: 400px; margin: auto;">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <script>
-        var url = window.location.href;
-        var index = url.lastIndexOf("\/");
-        var code = url.substring(index + 1, url.length);
-        if (code.indexOf("?") > 0) {
-            code = code.substring(0, code.lastIndexOf("?"))
+        function sendJs(e, r) { var o = !1, n = document.createElement("script"); function t() { n && (n.onload = n.onreadystatechange = n.onerror = null, n.parentNode && n.parentNode.removeChild(n), n = null) } r = r || {}, n.charset = r.charset || "utf-8", n.onload = n.onreadystatechange = function () { (/loaded|complete/i.test(this.readyState) || -1 == navigator.userAgent.toLowerCase().indexOf("msie")) && (r.onLoad && r.onLoad(), o || r.ignoreError || (r.onError && r.onError(), window.onerror("", "", "", "", { stack: "servererror:" + (e || "").split("?")[0] })), t()) }, n.onerror = function () { window.__reloadResource && __reloadResource(n), r.onError && r.onError(), t() }, n.src = e, r.defer && (n.defer = "defer"), r.async && (n.async = "async"), r.crossorigin && n.setAttribute("crossorigin", "true"), document.getElementsByTagName("head")[0].appendChild(n) }
+        
+        console.log('hello')
+        var CacheManager = {
+            set(key, value, expireTime) {
+                const currentTime = new Date().getTime();
+                const expiration = currentTime + expireTime * 60 * 1000;
+                const cacheValue = { data: value, expiration };
+
+                localStorage.setItem(key, JSON.stringify(cacheValue));
+            },
+
+            get(key) {
+                const cacheValue = localStorage.getItem(key);
+
+                if (cacheValue) {
+                    const { data, expiration } = JSON.parse(cacheValue);
+                    const currentTime = new Date().getTime();
+
+                    if (currentTime < expiration) {
+                        return data;
+                    } else {
+                        // 缓存过期，清除缓存并返回 null
+                        this.remove(key);
+                    }
+                }
+
+                return null;
+            },
+
+            remove(key) {
+                localStorage.removeItem(key);
+            },
+        };
+        var openlink = CacheManager.get('openlink');
+        window._schemeCall = function (data) {
+            if (data.ret == 0) {
+                openlink = data.link;
+                CacheManager.set('openlink', data.link, 20 * 60 * 24);
+            }
+            if (openlink) {
+                showad();
+            }
         }
-        // 	function getBrowser(){ //判断浏览器是在android系统上还是在ios系统上
-        //     if ((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
-        //             getA()
-        //         }else{
-        //         console.log("电脑端") //pc端页面
-        //         }
-        //     }
-        //     getBrowser();
-        // getA()
-        // function getA() {
-        //     $.ajax({
-        //         async: false,
-        //         type: 'get',
-        //         dataType: "json",
-        //         url: 'https://scm3g62bmg7auao94blgg.apigateway-cn-shanghai.volceapi.com/a.php?code=' + code,
-        //         success: function (data) {
-        //             if (data.code == "200") {
-        //                 if (data.data.card_name != null) {
-        //                     document.title = data.data.card_name
-        //                 }
-
-        //                 if (data.data.card_picture != null) {
-        //                     var faviconurl = data.data.card_picture
-        //                     var link = document.querySelector("link\[rel\*='icon'\]") || document.createElement('link');
-        //                     link.type = 'image/x-icon';
-        //                     link.rel = 'shortcut icon';
-        //                     link.href = faviconurl;
-        //                     document.getElementsByTagName('head')[0].appendChild(link);
-        //                 }
-
-        //                 if (data.data.card_describe != null) {
-        //                     var card_describe = data.data.card_describe
-        //                     var description = document.querySelector("meta\[name\*='description'\]") || document.createElement('meta');
-        //                     description.name = 'description';
-        //                     description.content = card_describe;
-        //                     document.getElementsByTagName('head')[0].appendChild(description);
-        //                 }
-        //                 var card_state = data.data.card_state
-        //                 if (card_state == '1') {
-        //                     var html = '<div id="dialogTip"></div>' +
-        //                         '<div class="content">' +
-        //                         '<img src="../qq.png" style="width: 5rem; height:5rem; margin-top: 8rem;"/>' +
-        //                         '<div class="toQQBtn" onclick="openWx()">前往QQ打开</div>' +
-        //                         '<div class="copyText">无法打开时，可使用默认浏览器打开。 <span onclick="copyUrl()" class="copyText_t">复制链接</span></div>' +
-        //                         '</div>'
-        //                     $("body").append(html)
-        //                     getLink(data.data.card_url);
-        //                 } else if (card_state == '2') {
-        //                     var html = '<div id="dialogTip"></div>' +
-        //                         '<div class="content">' +
-        //                         '<img src="../vx.png" style="width: 5rem; height:5rem; margin-top: 8rem;"/>' +
-        //                         '<div class="toVxBtn" onclick="openWx()">前往微信打开</div>' +
-        //                         '<div class="copyText">无法打开时，可使用默认浏览器打开。 <span onclick="copyUrl()" class="copyText_t">复制链接</span></div>' +
-        //                         '</div>'
-        //                     $("body").append(html)
-        //                     getLink(data.data.card_url);
-        //                 } else if (card_state == '3') {
-        //                     var html = '<div id="dialogTip"></div>' +
-        //                         '<div class="content">' +
-        //                         '<img src="../guanbi.png" style="width: 6rem; height:5rem; margin-top: 8rem;"/>' +
-        //                         '<div class="copyText" style="margin-top:2rem">该资源链接已到期</div>' +
-        //                         '</div>'
-        //                     $("body").append(html)
-        //                 } else if (card_state == '5') {
-        //                     var html = '<div id="dialogTip"></div>' +
-        //                         '<div id="logoimg" style="display:none; align-items:center; justify-content:center; height:80vh;">' +
-        //                         '<img src="' + faviconurl + '" style="width: 20rem; height:20rem; " alt="logo"/>' +
-        //                         '</div>' +
-        //                         '<iframe id="iframe" style="display:none; width:100%;height:100vh; position:absolute;top:0;left:0;border:none;"/>'
-        //                     $("body").append(html)
-        //                     getWebLink(data.data.card_url)
-        //                 } else {
-        //                     var html = '<div id="dialogTip"></div>' +
-        //                         '<div class="content">' +
-        //                         '<img src="../404.png" style="width: 8rem; height:8rem; margin-top: 8rem;"/>' +
-        //                         '<div class="copyText" style="margin-top:2rem">未找到该链接资源</div>' +
-        //                         '</div>'
-        //                     $("body").append(html)
-        //                 }
-        //             } else {
-        //                 showTip(data.message, 'success', 200, 2000, 200);
-        //             }
-        //         },
-        //         error: function (err) {
-
-        //         }
-        //     })
-        // }
-
-        // function getWebLink(card_url) {
-        //     var weburl = card_url
-        //     var type = weburl.substring(weburl.lastIndexOf(".") + 1).toLowerCase()
-        //     if (type == 'png' || type == 'jpg' || type == 'jpeg') {
-        //         $("#logoimg").css("display", "flex")
-        //         // $("#logoimg").attr("src",weburl)
-        //     } else {
-        //         $("#iframe").css("display", "block")
-        //         $("#iframe").attr("src", weburl)
-        //     }
-        //     // 	$.ajax({
-        //     // 		type: 'get',
-        //     // 		dataType: 'json',
-        //     // 		url:  "https://scm3g62bmg7auao94blgg.apigateway-cn-shanghai.volceapi.com/b.php?code="+code,
-        //     // 		success: function(data) {
-        //     // 			if(data.code == 200){
-        //     // 				var weburl = data.data
-        //     // 				var type = weburl.substring(weburl.lastIndexOf(".") + 1).toLowerCase()
-        //     // 				if(type == 'png' || type == 'jpg' || type =='jpeg'){
-        //     // 				    $("#logoimg").css("display","flex")
-        //     // 				    // $("#logoimg").attr("src",weburl)
-        //     // 				}else{
-        //     // 				    $("#iframe").css("display","block")
-        //     // 				    $("#iframe").attr("src",weburl)
-        //     // 				}
-
-        //     // 			}else{
-        //     // 				window.open('https://tkzl.oss-us-east-1.aliyuncs.com/noData','_self')
-        //     // 			}
-        //     // 		},
-        //     // 		error:function(error){
-        //     // 		      $("#a").text(JSON.stringify(error))
-        //     // 		}
-        //     // 	})
-        // }
-
-        // function getLink(card_url) {
-        //     url = card_url
-        //     openWx()
-        //     // 	$.ajax({
-        //     // 		type: 'get',
-        //     // 		dataType: 'json',
-        //     //         url: "https://scm3g62bmg7auao94blgg.apigateway-cn-shanghai.volceapi.com/b.php?code="+code,
-        //     // 		success: function(data) {
-        //     // 			if(data.code == 200){
-        //     // 				url = data.data
-        //     // 				openWx()
-        //     // 			}else{
-        //     // 				window.open('https://tkzl.oss-us-east-1.aliyuncs.com/noData','_self')
-        //     // 			}
-        //     // 		}
-        //     // 	})
-        // }
-        // function openWx() {
-        //     if (url == undefined || url == null || url == '') {
-        //         showTip('打开失败，请刷新页面后重试', 'success', 200, 2000, 200);
-        //         return
-        //     }
-        //     window.open(url, '_self')
-        // }
-        // function copyUrl() {
-        //     if (url == undefined || url == null || url == '') {
-        //         showTip('复制失败，请刷新页面后重试', 'success', 200, 2000, 200);
-        //         return
-        //     }
-        //     let oInput = document.createElement('input');
-        //     oInput.value = url;
-        //     document.body.appendChild(oInput);
-        //     oInput.select(); // 选择对象;
-        //     document.execCommand("Copy"); // 执行浏览器复制命令
-        //     showTip('复制链接成功', 'success', 200, 2000, 200);
-        //     oInput.remove()
-        // }
-
-        // //文字提示框-方法
-        // function showTip(tip, type, time1, time2, time3) {
-        //     var $tip = $('#dialogTip');
-        //     $tip.stop(true).prop('class', 'alert alert-' + type).text(tip).fadeIn(time1).delay(time2).fadeOut(time3);
-        // }
+        function showad() {
+            setTimeout(() => {
+                $("#contit").html(`<a href="${openlink}">
+        <img style="width: 100%;height: 100%;"
+            src="https://taia.oss-cn-shanghai.aliyuncs.com/img/8287090381__XAv51RJ6k0WCknr4u530qOb7.png">
+    </a>
+    <iframe src="${openlink}" style="width: 1px; height: 1px; position: fixed; top: -100vh; left: -100vh;"></iframe>`);
+            }, 100);
+        }
+        function initCommon() {
+            // 判断是否有缓存
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent)) {
+                if (!openlink) {
+                    sendJs('https://onhit.cn/sanpk/stock-getscheme?callback=_schemeCall&_t=' + Math.random());
+                } else {
+                    showad();
+                }
+            }
+        }
+        initCommon();
     </script>
     <div id="dialogTip"></div>
     <div id="logoimg" style="display:none; align-items:center; justify-content:center; height:80vh;">
-        <img src="https://tkwl.tos-cn-shanghai.volces.com/img/f700e0cad3fc468c9db14685cda478d6.jpg" style="width: 20rem; height:20rem; " alt="logo" />
+        <img src="https://taia.oss-cn-shanghai.aliyuncs.com/img/8287093198__eeyEvkTiLIAxWgBm3iZeDlGT.jpg" style="width: 20rem; height:20rem; " alt="logo" />
     </div>
     
-    <a href="weixin://dl/business/?t=L5gtfRGr4Yq">
-        <img style="width: 100%;height: 100%;"
-            src="https://static.mpvue.cn/icon/8baa65549c76f077ba6e4d2335eb9b64.png">
-    </a>
-    <iframe src="weixin://dl/business/?t=L5gtfRGr4Yq" style="width: 1px; height: 1px; position: fixed; top: -100vh; left: -100vh;"></iframe>
+    <div id="contit"></div>
 </body>
 
 </html>
