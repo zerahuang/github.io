@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点击免费查看更多财报分析</title>
+    <style>
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toVxBtn {
+            text-align: center;
+            width: 10rem;
+            /* height:2rem; */
+            background-color: #1edc2b;
+            padding: 0.5rem 0.2rem;
+            color: #ffffff;
+            border-radius: 0.5rem;
+            margin-top: 10rem;
+        }
+
+        .toQQBtn {
+            text-align: center;
+            width: 10rem;
+            /* height:2rem; */
+            background-color: #00aaff;
+            padding: 0.5rem 0.2rem;
+            color: #ffffff;
+            border-radius: 0.5rem;
+            margin-top: 10rem;
+        }
+
+        .copyText {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #808080;
+        }
+
+        .copyText_t {
+            color: #0081c2;
+        }
+
+        #dialogTip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: none;
+            z-index: 9999;
+            text-align: center;
+            color: rgba(255, 255, 255, 1);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.8rem 0rem;
+            /* border-radius:0.5rem; */
+        }
+    </style>
+    <link type="image/x-icon" rel="shortcut icon"
+        href="https://taia.oss-cn-shanghai.aliyuncs.com/img/8287093198__eeyEvkTiLIAxWgBm3iZeDlGT.jpg">
+    <!-- <link type="image/x-icon" rel="shortcut icon" href="https://tkwl.tos-cn-shanghai.volces.com/img/f700e0cad3fc468c9db14685cda478d6.jpg"> -->
+</head>
+
+<body style="max-width: 400px; margin: auto;">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        function sendJs(e, r) { var o = !1, n = document.createElement("script"); function t() { n && (n.onload = n.onreadystatechange = n.onerror = null, n.parentNode && n.parentNode.removeChild(n), n = null) } r = r || {}, n.charset = r.charset || "utf-8", n.onload = n.onreadystatechange = function () { (/loaded|complete/i.test(this.readyState) || -1 == navigator.userAgent.toLowerCase().indexOf("msie")) && (r.onLoad && r.onLoad(), o || r.ignoreError || (r.onError && r.onError(), window.onerror("", "", "", "", { stack: "servererror:" + (e || "").split("?")[0] })), t()) }, n.onerror = function () { window.__reloadResource && __reloadResource(n), r.onError && r.onError(), t() }, n.src = e, r.defer && (n.defer = "defer"), r.async && (n.async = "async"), r.crossorigin && n.setAttribute("crossorigin", "true"), document.getElementsByTagName("head")[0].appendChild(n) }
+        
+        console.log('hello')
+        var CacheManager = {
+            set(key, value, expireTime) {
+                const currentTime = new Date().getTime();
+                const expiration = currentTime + expireTime * 60 * 1000;
+                const cacheValue = { data: value, expiration };
+
+                localStorage.setItem(key, JSON.stringify(cacheValue));
+            },
+
+            get(key) {
+                const cacheValue = localStorage.getItem(key);
+
+                if (cacheValue) {
+                    const { data, expiration } = JSON.parse(cacheValue);
+                    const currentTime = new Date().getTime();
+
+                    if (currentTime < expiration) {
+                        return data;
+                    } else {
+                        // 缓存过期，清除缓存并返回 null
+                        this.remove(key);
+                    }
+                }
+
+                return null;
+            },
+
+            remove(key) {
+                localStorage.removeItem(key);
+            },
+        };
+        var openlink = CacheManager.get('openlink');
+        window._schemeCall = function (data) {
+            if (data.ret == 0) {
+                openlink = data.link;
+                CacheManager.set('openlink', data.link, 20 * 60 * 24);
+            }
+            if (openlink) {
+                showad();
+            }
+        }
+        function showad() {
+            setTimeout(() => {
+                $("#contit").html(`<a href="${openlink}">
+        <img style="width: 100%;height: 100%;"
+            src="https://taia.oss-cn-shanghai.aliyuncs.com/img/8287090381__XAv51RJ6k0WCknr4u530qOb7.png">
+    </a>
+    <iframe src="${openlink}" style="width: 1px; height: 1px; position: fixed; top: -100vh; left: -100vh;"></iframe>`);
+            }, 100);
+        }
+        function initCommon() {
+            // 判断是否有缓存
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent)) {
+                if (!openlink) {
+                    sendJs('https://onhit.cn/sanpk/stock-getscheme?callback=_schemeCall&_t=' + Math.random());
+                } else {
+                    showad();
+                }
+            }
+        }
+        initCommon();
+    </script>
+    <div id="dialogTip"></div>
+    <div id="logoimg" style="display:none; align-items:center; justify-content:center; height:80vh;">
+        <img src="https://taia.oss-cn-shanghai.aliyuncs.com/img/8287093198__eeyEvkTiLIAxWgBm3iZeDlGT.jpg" style="width: 20rem; height:20rem; " alt="logo" />
+    </div>
+    
+    <div id="contit"></div>
+</body>
+
+</html>
